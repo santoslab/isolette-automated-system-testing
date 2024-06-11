@@ -34,7 +34,7 @@ if(result == 0) {
 }
 
 if(result == 0) {
-    result = proc"$sireum slang run ${homeDir / "aadl" / "bin" / "generate-system-test-artifacts"}".console.echo.run().exitCode
+    result = proc"$sireum slang run ${homeDir / "hamr" / "slang" / "bin" / "generate-system-test-artifacts.sc"}".console.echo.run().exitCode
 }
 
 if(result == 0) {

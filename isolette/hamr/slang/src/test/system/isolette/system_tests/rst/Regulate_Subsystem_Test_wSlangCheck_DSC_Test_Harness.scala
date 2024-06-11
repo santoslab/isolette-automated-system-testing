@@ -19,6 +19,8 @@ class Regulate_Subsystem_Test_wSlangCheck_DSC_Test_Harness
   extends Regulate_Subsystem_Test_wSlangCheck
     with Regulate_Subsystem_Inputs_Container_DSC_Test_Harness {
 
+  override def excludes = for(c <- configurations) yield c.name
+
   override def next(): isolette.system_tests.rst.Regulate_Subsystem_Inputs_Container = {
     return getConfig().profile.next()
   }

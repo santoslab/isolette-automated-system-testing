@@ -19,6 +19,8 @@ class Monitor_Subsystem_DSC_Test_Harness
   extends Monitor_Subsystem_Test_wSlangCheck
     with Monitor_Subsystem_Inputs_Container_DSC_Test_Harness {
 
+  override def excludes: ISZ[String] = for(c <- configurations) yield c.name
+
   override def next(): isolette.system_tests.monitor1.Monitor_Subsystem_Inputs_Container = {
     //val testRow = configurations.get(getTestId()).get
     return getConfig().profile.next()

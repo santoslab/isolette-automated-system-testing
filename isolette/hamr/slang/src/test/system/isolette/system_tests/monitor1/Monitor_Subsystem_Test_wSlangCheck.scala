@@ -42,6 +42,8 @@ class Monitor_Subsystem_Test_wSlangCheck
   var verbose: B = F
   val failOnTriviallyTrueProps: B = T
 
+  def excludes: ISZ[String] = ISZ()
+
   // Monitor threads being tested
   val components: ISZ[String] = ISZ(
     StaticSchedulerCust.revThreadNickNames.get(Arch.isolette_single_sensor_Instance_thermostat_monitor_temperature_manage_monitor_interface.id).get,
@@ -290,7 +292,7 @@ class Monitor_Subsystem_Test_wSlangCheck
       }
     }
 
-    for (i <- 0 until maxTests) {
+    for (i <- 0 until maxTests if !ops.ISZOps(excludes).contains(config.name)) {
       val testName = s"${genTestName(config)}_$i"
       this.registerTest(testName) {
         var retry: B = T
@@ -798,6 +800,9 @@ class Monitor_Subsystem_Test_wSlangCheck
     }
     ret
   }
+
+
+  // BOILER PLATE CODE
 
   override def beforeEach(): Unit = {
 

@@ -35,46 +35,13 @@ class Regulate_Subsystem_Test_wSlangCheck
     Art.computePhase(scheduler)
   }
 
-  override def beforeEach(): Unit = {
-
-    // uncomment the following to disable the various guis and to suppress the log streams
-    disableLogsAndGuis()
-
-    super.beforeEach()
-  }
-
-  override def beforeAll(): Unit = {
-    propStatus = Map.empty
-    super.beforeAll()
-  }
-
-  val failOnTriviallyTrueProps: B = T
-
-  override def afterAll(): Unit = {
-    var msgs: ISZ[String] = ISZ()
-    for (p <- propStatus.entries if p._2.triggerT_desiredT == 0) {
-      // propStatus has three fields
-      //   # of F -> X
-      //   # of T -> F  --> the test case would have failed for T -> F so this should be 0
-      //   # of T -> T  --> may need to increase # of tests if this is always 0
-      msgs = msgs :+ s"Property ${p._1} was trivially true ${p._2.triggerF} times, desired failed ${p._2.triggerT_desiredF} times, and desired was never satisfied"
-    }
-    if (msgs.nonEmpty) {
-      if (failOnTriviallyTrueProps) {
-        assert(F, st"${(msgs, "\n")}".render)
-      } else {
-        cprint(T, st"${(msgs, "\n")}".render)
-      }
-    }
-    super.afterAll()
-  }
-
   //===========================================================
   //  S l a n g   C h e c k    Infrastructure
   //===========================================================
 
   val maxTests = 100
   var verbose: B = F
+  val failOnTriviallyTrueProps: B = T
 
   // Regulator threads being tested
   val components: ISZ[String] = ISZ(
@@ -83,6 +50,8 @@ class Regulate_Subsystem_Test_wSlangCheck
     StaticSchedulerCust.revThreadNickNames.get(Arch.isolette_single_sensor_Instance_thermostat_regulate_temperature_manage_heat_source.id).get,
     StaticSchedulerCust.revThreadNickNames.get(Arch.isolette_single_sensor_Instance_thermostat_regulate_temperature_detect_regulator_failure.id).get
   )
+
+  def excludes: ISZ[String] = ISZ()
 
   val configurations: ISZ[SystemTestConfiguration] = ISZ(
     // ======================
@@ -343,7 +312,7 @@ class Regulate_Subsystem_Test_wSlangCheck
       }
     }
 
-    for (i <- 0 until config.numTests) {
+    for (i <- 0 until config.numTests if !ops.ISZOps(excludes).contains(config.name)) {
       val testName = s"${genTestName(config)}_$i"
       this.registerTest(testName) {
         var retry: B = T
@@ -880,6 +849,45 @@ class Regulate_Subsystem_Test_wSlangCheck
 
   @strictpure def compute_spec_lower_is_not_higher_than_upper_assume(container: Regulate_Subsystem_Inputs_Container): B =
     container.lowerDesiredTempWStatus.value <= container.upperDesiredTempWStatus.value
+
+
+  // BOILER PLATE CODE
+
+  override def beforeEach(): Unit = {
+
+    // uncomment the following to disable the various guis and to suppress the log streams
+    disableLogsAndGuis()
+
+    super.beforeEach()
+  }
+
+  override def beforeAll(): Unit = {
+    val s = Set.empty[String] ++ (for(c <- configurations) yield c.name)
+    assert (s.size == configurations.size, "Configuration names must be unique")
+    assert (ops.ISZOps(s.elements).forall(p => !ops.StringOps(p).contains(" ")), "Configuration names cannot contain spaces")
+
+    propStatus = Map.empty
+    super.beforeAll()
+  }
+
+  override def afterAll(): Unit = {
+    var msgs: ISZ[String] = ISZ()
+    for (p <- propStatus.entries if p._2.triggerT_desiredT == 0) {
+      // propStatus has three fields
+      //   # of F -> X
+      //   # of T -> F  --> the test case would have failed for T -> F so this should be 0
+      //   # of T -> T  --> may need to increase # of tests if this is always 0
+      msgs = msgs :+ s"Property ${p._1} was trivially true ${p._2.triggerF} times, desired failed ${p._2.triggerT_desiredF} times, and desired was never satisfied"
+    }
+    if (msgs.nonEmpty) {
+      if (failOnTriviallyTrueProps) {
+        assert(F, st"${(msgs, "\n")}".render)
+      } else {
+        cprint(T, st"${(msgs, "\n")}".render)
+      }
+    }
+    super.afterAll()
+  }
 
   def bookKeep(triggerCond: B, desiredCond: B): Unit = {
     val propName = Thread.currentThread().getStackTrace()(2).getMethodName
