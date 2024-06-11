@@ -2,15 +2,15 @@
 
 package isolette.Regulate
 
-import isolette.Isolette_Data_Model.Regulator_Mode
 import org.sireum._
+import isolette.Isolette_Data_Model.Regulator_Mode
 import isolette._
 
 // This file will not be overwritten so is safe to edit
 object Manage_Regulator_Mode_impl_thermostat_regulate_temperature_manage_regulator_mode {
 
   // BEGIN STATE VARS
-  var lastRegulatorMode: Regulator_Mode.Type = Regulator_Mode.Init_Regulator_Mode
+  var lastRegulatorMode: Isolette_Data_Model.Regulator_Mode.Type = Isolette_Data_Model.Regulator_Mode.byOrdinal(0).get
   // END STATE VARS
 
   def initialise(api: Manage_Regulator_Mode_impl_Initialization_Api): Unit = {
@@ -90,11 +90,13 @@ object Manage_Regulator_Mode_impl_thermostat_regulate_temperature_manage_regulat
           (api.regulator_mode == Isolette_Data_Model.Regulator_Mode.Failed_Regulator_Mode &&
             lastRegulatorMode == Isolette_Data_Model.Regulator_Mode.Failed_Regulator_Mode)),
         // case REQ_MRM_MaintainFailed
-        //   If the current regulator mode is Failed, then the regulator mode
-        //   remains in the Failed state and the LastRegulator mode remains Failed
-        (In(lastRegulatorMode) == Regulator_Mode.Failed_Regulator_Mode) -->:
-          (api.regulator_mode == Regulator_Mode.Failed_Regulator_Mode &&
-          lastRegulatorMode == Regulator_Mode.Failed_Regulator_Mode)
+        //   'maintaining FAIL, FAIL to FAIL'
+        //   If the current regulator mode is Failed, then
+        //   the regulator mode remains in the Failed state and the LastRegulator mode remains Failed.REQ-MRM-Maintain-Failed
+        //   http://pub.santoslab.org/high-assurance/module-requirements/reading/FAA-DoT-Requirements-AR-08-32.pdf#page=109
+        (In(lastRegulatorMode) == Isolette_Data_Model.Regulator_Mode.Failed_Regulator_Mode) -->: (api.regulator_mode == Isolette_Data_Model.Regulator_Mode.Failed_Regulator_Mode &&
+          lastRegulatorMode == Isolette_Data_Model.Regulator_Mode.Failed_Regulator_Mode)
+        // END COMPUTE ENSURES timeTriggered
       )
     )
 
