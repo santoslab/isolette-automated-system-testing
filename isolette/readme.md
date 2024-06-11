@@ -96,6 +96,23 @@ The following Thread components will house the application logic for the Isolett
 
 <!--end____isolette_arch-section_aadl-arch-component-info-detect_regulator_failure-drf-->
 
+## How To Run
+
+The following will
+
+- Clone the relevant repositories
+- Rerun HAMR codegen on the isolette AADL model
+- Regenerate the system testing artifacts
+- Run all the unit and system tests
+- Run Logika on all components that are 'in' Logika
+
+```
+git clone https://github.com/santoslab/isolette-automated-system-testing.git
+git clone https://github.com/santoslab/hamr-system-testing-artifact-generator.git
+sireum proyek assemble --uber -m org.sireum.hamr.systest.generator.SystemTestArtifactGen hamr-system-testing-artifact-generator/
+isolette/.ci/ci.cmd
+```
+
 ## <!--start__isolette_behavior-code-title-->Behavior Code<!--end____isolette_behavior-code-title-->
 <!--start__isolette_behavior-code-description-->
 The following items link to the Slang source code for the application logic of each thread.
