@@ -83,7 +83,13 @@ if ((aadlDir.up / "hamr" / "slang" / ".idea").exists) {
 
 codegenArgs = codegenArgs :+ (aadlDir / ".system").string
 
-val results = Os.proc(osireum ++ codegenArgs).echo.console.run()
+var results: OsProto.Proc.Result = Os.proc(osireum ++ codegenArgs).echo.console.run()
+
+if (results.exitCode == 0) {
+  println("Running custom sergen and slangcheck scripts ...")
+  results = proc"${ aadlDir.up / "hamr" / "slang" / "bin" / "sergen_sys.cmd" }".console.run()
+  results = proc"${ aadlDir.up / "hamr" / "slang" / "bin" / "slangcheck_sys.cmd" }".console.run()
+}
 
 // Running under windows results in 23 which is an indication 
 // a platform restart was requested. Codegen completes 
