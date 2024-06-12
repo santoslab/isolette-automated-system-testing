@@ -76,4 +76,7 @@ jobs:
 
           $SIREUM_HOME/hamr/codegen/bin/build.cmd install-osate-gumbo
 
+          git config user.email "fake@fake.com"
+          git config user.name "fake"
+          
           .ci/test.cmd

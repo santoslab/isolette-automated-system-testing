@@ -110,6 +110,9 @@ jobs:
 
           call %SIREUM_HOME%\hamr\codegen\bin\build.cmd install-osate-gumbo || goto :error
 
+          call git config user.email "fake@fake.com" || goto :error
+          call git config user.name "fake" || goto :error
+
           call .ci\test.cmd || goto :error
                     
           goto :EOF
