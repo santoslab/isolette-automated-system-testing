@@ -16,7 +16,7 @@ class Manage_Monitor_Interface_impl_thermostat_monitor_temperature_manage_monito
   // set failOnUnsatPreconditions to T if the unit tests should fail when either
   // SlangCheck is never able to satisfy a datatype's filter or the generated
   // test vectors are never able to satisfy an entry point's assume pre-condition
-  val failOnUnsatPreconditions: B = F
+  val failOnUnsatPreconditions: B = T
 
   def configs: MSZ[UnitTestConfigurationBatch] = {
     return MSZ(
