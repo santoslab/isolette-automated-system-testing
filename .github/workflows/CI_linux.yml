@@ -76,6 +76,9 @@ jobs:
 
           $SIREUM_HOME/hamr/codegen/bin/build.cmd install-osate-gumbo
 
+          git config --global credential.username "xxx"
+          git config --global user.email "xx@xx.com"
+
           git clone https://github.com/santoslab/hamr-system-testing-artifact-generator.git ../hamr-system-testing-artifact-generator
           sireum proyek assemble --uber -m org.sireum.hamr.systest.generator.SystemTestArtifactGen ../hamr-system-testing-artifact-generator
 
