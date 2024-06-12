@@ -42,7 +42,7 @@ class GumboXRuntimeMonitor_Ext extends JFrame with RuntimeMonitorListener {
           val id = data.bridgeId.toZ
           testCases = testCases + id ~>
             (testCases.getOrElse(id, ISZ[ST]()) :+
-              GumboXDispatcher.genTestCase(data.observationKind, data.pre, data.post, Some(": $i")))
+              GumboXDispatcher.genTestCase(data.observationKind, data.pre, data.post, Some(s": $row")))
         }
         GumboXDispatcher.genTestSuite(testCases.entries)
       }
